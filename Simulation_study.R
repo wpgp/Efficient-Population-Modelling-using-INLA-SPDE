@@ -1,6 +1,6 @@
 ####--TITLE: R SCRIPTS FOR MODELLED POPULATION ESTIMATES BASED ON R-INLA:SIMULATION STUDY----#####
 ####--METHODS: GEOSTATISTICAL BAYESIAN HIERARCHICAL REGRESSION MODEL---------------------#####
-####--AUTHOR: DR CHIBUZOR CHRISTOPHER NNANATU & DR ORTIS YANKEY-------------------------#####
+####--AUTHOR: DR CHIBUZOR CHRISTOPHER NNANATU ------------------------#####
 ####--INSTITUTION: WORLDPOP, UNIVERSITY OF SOUTHAMPTON----------------------------------##### 
 ####--DATE: DECEMBER 2022---------------------------------------------------------------####
 ####@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@####
