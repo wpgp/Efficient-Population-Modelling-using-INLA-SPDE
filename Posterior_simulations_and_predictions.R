@@ -1,7 +1,7 @@
 
 ####--TITLE: R SCRIPTS FOR MODELLED POPULATION ESTIMATES FOR CAMEROON BASED ON R-INLA----#####
 ####--METHODS: GEOSTATISTICAL BAYESIAN HIERARCHICAL REGRESSION MODEL---------------------#####
-####--AUTHOR: DR CHIBUZOR CHRISTOPHER NNANATU & DR ORTIS YANKEY-------------------------#####
+####--AUTHOR: DR CHIBUZOR CHRISTOPHER NNANATU-------------------------#####
 ####--INSTITUTION: WORLDPOP, UNIVERSITY OF SOUTHAMPTON----------------------------------##### 
 ####--DATE: DECEMBER 2022---------------------------------------------------------------####
 ####@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@@####
