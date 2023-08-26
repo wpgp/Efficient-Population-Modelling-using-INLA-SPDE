@@ -43,8 +43,6 @@ model_metrics <- function(obs, pred, upper, lower)
 ###---loop over each number of areal unit (adminunit) level
 for(i in AdmUnit)
 {
-  
-i=8
   print(i)
   result_path <- paste0(out_path,"/estimates_for_", i^2,"_area_units")
   if (file.exists(result_path)){
