@@ -17,4 +17,4 @@ The datasets included here are:
 2) The combined shapefiles for the household listing - CMR_Data3.shp (plus other accompanying files)
 3) There are other files used to obtain information required for zonal statistics calculation (e.g.,Department.csv)
 
-# Please kindly email the lead author on cc.nnanatu@soton.ac.uk or nnanatuchibuzor@gmail.com, should have any feedback or questions. This will be greatly appreciated. Thanks!
+Please kindly email the lead author on cc.nnanatu@soton.ac.uk or nnanatuchibuzor@gmail.com, should have any feedback or questions. This will be greatly appreciated. Thanks!
