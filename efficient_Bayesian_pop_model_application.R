@@ -190,7 +190,31 @@ corrplot(
 )
 #dev.off()
 
+#---------------------------------------------------------
+### Test for Spatial Autoccorrelation using Moran's I stat
+# Define the neighbors (use queen case)
+names(shp)
+#library(sf)
+library(spdep)
+#library(tmap)
+# check for invalid geometries, and fix if any
+table(st_is_valid(shp))
+dim(valid <- st_make_valid(shp))
+shp <- valid
+table(st_is_valid(shp))
 
+# Check for empty polygons, and remove if any
+table(st_is_empty(shp))
+
+# build neighbourhood structures 
+nb <- poly2nb(shp, queen=TRUE)
+lw <- nb2listw(nb, style="W", zero.policy=TRUE)
+
+# Carry out the Moran's I test
+moran.test(shp$O_LHHSI,lw, alternative="greater", zero.policy=TRUE)
+              # O_LHHSI: is the population size variable
+              # Moran's I stat = 0.149; p-value = 0.0002
+              # there is spatial clsutering in the data
 #-------------------------------------------------------------
 # Below, the selected model covariates will be used to fit
 # Bayesian Geostatistical Model using INLA-SPDE
@@ -952,7 +976,7 @@ adm3tr = st_transform(adm3, coords = c('lon', 'lat'), crs=4326)
 
 # Yaounde
 #library(raster)
-dim(shp_ynde <- adm3tr %>% filter(libelle %in% paste0("Yaoundé ", 5)))
+dim(shp_ynde <- adm3tr %>% filter(libelle %in% paste0("YaoundÃ© ", 5)))
 ext_ynde <- extent(11.52, 11.56, 3.84, 3.88)
 
 # mean
