@@ -41,11 +41,16 @@ library(tmaptools)
 githublink <- "https://raw.github.com/wpgp/Efficient-Population-Modelling-using-INLA-SPDE/main/CMR_input_data.RData"
 load(url(githublink))
 
-ls() # view the loaded files - only 'dat' and 'shp' are needed
+ls() # view the loaded files: Only need - dat, shp, df, div_names & reg_names 
 # dat: the input demographic data with observed population counts and covariates
 str(dat)
 #  shp: the associated shapefiles fo the combined household listing datasets
 str(shp)
+# df: contains NIS 2022 regional projections and predicted counts - for post analysis
+str(df)
+# div_names & reg_names are required for calculating agggregated totals
+str(div_names); str(reg_names)
+
 
 # visualise the imputed household size
 plot(shp["I_LHHSI"]) 
