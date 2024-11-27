@@ -36,35 +36,16 @@ library(tmap)
 library(tmaptools)
 #---------------------------------------------------------------------------------
 ###--Specify key file paths
-drive_path <- "//worldpop.files.soton.ac.uk/Worldpop/Projects/WP517763_GRID3/Working/CMR/Chris_N/paper1/application/"
-
-data_path <- paste0(drive_path, "data/")# all datasets 
-output_path <- paste0(drive_path, "output/")# all results
-#surv_path <- paste0(data_path, "Input_Survey_Data/")# combined household listing data
-#shp_path <- paste0(data_path, "Input_Settlement_Boundaries/EA/")# shapefile - boundaries  
-#cov_path <- paste0(data_path, "Input_Covariates/")# Model geospatial covariates
-#admin_path <- paste0(data_path, "Admin_files/") # Other administrative files 
-#---------------------------------------------------------------------------------
 
 # Load and explore data       
-#dat <- read.csv(paste0(data_path,"Input_Survey_Data/CMR_Complete_Data3.csv"))# combined survey data
-#shp <- st_read(paste0(data_path, "Input_Settlement_Boundaries/EA/CMR_Data3.shp")) #combined shapefile  
-#names(shp)
-githublink <- "https://raw.github.com/wpgp/Efficient-Population-Modelling-using-INLA-SPDE/main/CMR_Complete_Data3.RData"
+githublink <- "https://raw.github.com/wpgp/Efficient-Population-Modelling-using-INLA-SPDE/main/CMR_input_data.RData"
 load(url(githublink))
-names(covs) # the data frame is called 'covs' 
 
-install.packages("googledrive")
-library(googledrive)
-# Replace 'your_file_id' with the actual file ID
-drive_download(as_id("your_file_id"), path = "local_file.csv")
-temp <- tempfile(fileext = ".zip")
-download.file("https://drive.google.com/uc?authuser=0&id=1AiZda_1-2nwrxI8fLD0Y6e5rTg7aocv0&export=download",
-  temp)
-out <- unzip(temp, exdir = tempdir())
-bank <- read.csv(out[14], sep = ";")
-str(bank)
-
+ls() # view the loaded files - only 'dat' and 'shp' are needed
+# dat: the input demographic data with observed population counts and covariates
+str(dat)
+#  shp: the associated shapefiles fo the combined household listing datasets
+str(shp)
 
 # visualise the imputed household size
 plot(shp["I_LHHSI"]) 
@@ -405,6 +386,7 @@ grid.arrange(levelplot(g.mean, scales=list(draw=F),
 #  6) Obtain the posterior statistics as well as uncertainty quantification 
 #--------------------------------------------------------------------------
 # Load the stack of prediction covariates
+# download the prediction stack "prediction_data.RDS" from Google drive here: https://drive.google.com/file/d/1290hqUnBHhQS0I3iijddj34solTG-S_S/view?usp=sharing
 pred_data <- readRDS(paste0(data_path, "Input_Covariates/prediction_data.RDS"))
 data <- pred_data
 head(pred_data)
@@ -515,9 +497,6 @@ nat_total <- function(dat, run)
 #write.csv(national, file=paste0(results_path, "/estimates/National_estimates_final.csv"))
 
 ##---Regional estimates
-reg_names <- data.frame(read.csv(paste0(data_path, "Admin_Data/Regions.csv"))) #---region names and codes
-reg_names <- reg_names[order(reg_names$id),]
-
 regional_est <- function(datr, run)
 {
   uniR <- unique(reg_names$id)
@@ -551,9 +530,6 @@ sum(regional.est$total)
 #write.csv(regional.est, file=paste0(results_path, "/estimates/regional_final.csv"))
 
 ##---Divisional estimates
-div_names <- data.frame(read.csv(paste0(data_path, "Admin_Data/Department.csv"))) #---division/department names and codes
-div_names <- div_names[order(div_names$id),]
-
 divisional_est <- function(datd, run)
 {
   uniD <- unique(div_names$id)
@@ -944,227 +920,12 @@ writeRaster(cmr_cv, filename=paste0(output_path, "/gridded_cv_total.tif"),
             overwrite=TRUE, options = c('COMPRESS' = 'LZW'))
 
 
-
-
-
-##--convert to spdf
-#-install.packages("tmap", type="binary")
-library(tmap)
-library(tmaptools)
-library(rgdal)
-library(sf)
-library(raster)
-#install.packages("cartography")
-library('cartography') # mapping dedicated package
-#install.packages("OpenStreetMap")
-library(OpenStreetMap)
-
-# Specify specific admin shapefiles paths
-national_path <- paste0(data_path, "Input_Settlement_Boundaries/National")
-region_path <- paste0(data_path, "Input_Settlement_Boundaries/Regional")
-dept_path <- paste0(data_path, "Input_Settlement_Boundaries/Departmental")
-sdept_path <- paste0(data_path, "Input_Settlement_Boundaries/Subdivisional")
-
-# load shapefiles
-adm0 <- st_read(paste0(national_path,"/CMR_Boundary.shp"))
-adm1 <- st_read(paste0(region_path, "/Region_SHP.shp"))
-adm2 <- st_read(paste0(dept_path, "/Departement_SHP.shp"))
-adm3 <- st_read(paste0(sdept_path, "/arrondissement_shp.shp"))
-
-
-# read in the saved raster files
-mean_tot <- raster(paste0(output_path, "/gridded_mean_total.tif"))
-mean_low <- raster(paste0(output_path, "/gridded_lower_total.tif"))
-mean_upp <- raster(paste0(output_path, "/gridded_upper_total.tif"))
-mean_cv <- raster(paste0(output_path, "/gridded_cv_total.tif"))
-
-
-# Visualise the raster data
-adm0tr = st_transform(adm0, coords = c('lon', 'lat'), crs=4326) # transform to lonlat
-adm0s <- as(st_geometry(adm0tr), "Spatial") # convert to spatial object
-plot(adm0s, col="white")
-plot(mean_tot, add=T) # add the raster of mean population counts
-
-
-# Zoom in to Yaounde and Doula
-adm3tr = st_transform(adm3, coords = c('lon', 'lat'), crs=4326)
-
-# Yaounde
-#library(raster)
-dim(shp_ynde <- adm3tr %>% filter(libelle %in% paste0("Yaoundé ", 5)))
-ext_ynde <- extent(11.52, 11.56, 3.84, 3.88)
-
-# mean
-plot(mean_tot, ext = extent(ext_ynde),
-     legend=T, col = viridis(100),  asp = NA, cex.axis=1.4)
-
-# cv
-plot(mean_cv, ext = extent(ext_ynde),
-     legend=T, col = magma(100),  asp = NA, cex.axis=1.4)
-
-
-
-## Doula
-dim(shp_dou <- adm3tr %>% filter(libelle %in% paste0("Douala ", 3)))
-ext_dou <- extent(9.72, 9.76, 4.02, 4.06)
-
-# mean
-plot(mean_tot, ext = extent(ext_dou),
-     legend=T, col = viridis(100),  asp = NA, cex.axis=1.4)
-# cv
-plot(mean_cv, ext = extent(ext_dou),
-     legend=T, col = magma(100),  asp = NA, cex.axis=1.4)
-
-##
-
-#---------------------------------------------------------------
-## Mapping Administrative totals
-#----------------------------------------------------------------
-
-# Regional
-
-# Extract Observed count and add to regional shapefile
-
-
-#tmap_mode("view")
-#interactive1 <- tm_basemap("OpenStreetMap")+
-  ##tm_basemap("OpenStreetMap")+
- # tm_shape(adm1)+
-  #tm_fill(col="gray")+
- # tm_borders(col="red", lwd=2)+
- # tm_layout(legend.outside = TRUE)+
-  # tm_compass(position = c("left", "bottom"))+
-  #tm_scale_bar(position = c("left", "bottom"))+
-  #tm_layout(main.title = "CMR")
-
-#interactive1
-
-#tmap_save(interactive1, "interactive1.html")
-#tmap_mode("plot")
-
-
-datt <- sim.dens1$est_data
-#--Observed regional total
-names(dat)
-reg_obs <- dat %>% dplyr::group_by(region) %>%
-  dplyr::summarise(count=sum(pop, na.rm=T))
-
-#--Predicted regional total
-reg_pred <- datt %>% dplyr::group_by(CMR_Regions) %>%
-  dplyr::summarise(count=sum(round(mean_pop_hat), na.rm=T))
-
-adm1a <- adm1
-adm1a$obs <- reg_obs$count[as.numeric(adm1a$id)]
-adm1a$pred <-regional.est$total[as.numeric(adm1a$id)]
-adm1a$predL <-regional.est$lower[as.numeric(adm1a$id)]
-adm1a$predU <-regional.est$upper[as.numeric(adm1a$id)]
-adm1a$uncert <-regional.est$uncertainty[as.numeric(adm1a$id)]
-
-
-# Map regional values 
-# Mean
-tmap_mode("plot")
-rpred <- tm_shape(adm1a)+ 
-  tm_polygons(col="pred", title="Predicted Count",
-              style="cont", n=8, palette="Blues",
-              legend.show = F,
-              breaks = c(700000, 1000000, 2000000,
-                         3000000, 5000000, 7000000))+
-  tm_borders(col="black", lwd=2)+
-  tm_layout(frame=F)
-rpred
-
-
-# lower
-rpred.lower <- tm_shape(adm1a)+ 
-  tm_polygons(col="predL", title="Predicted Count",
-              style="cont", n=8, palette="Blues",
-              legend.show = F,
-              breaks = c(700000, 1000000, 2000000,
-                         3000000, 5000000, 7000000))+
-  tm_borders(col="black", lwd=2)+
-  tm_layout(frame=F)
-rpred.lower
-
-# upper
-rpred.upper <- tm_shape(adm1a)+ 
-  tm_polygons(col="predU", title="Predicted Count",
-              style="cont", n=8, palette="Blues",
-              legend.show = F,
-              breaks = c(700000, 1000000, 2000000,
-                         3000000, 5000000, 7000000))+
-  tm_borders(col="black", lwd=2)+
-  tm_layout(frame=F)
-rpred.upper
-
-t_reg <-tmap_arrange(rpred, rpred.lower, 
-                     rpred.upper,nrow=1)
-#------------------------------------------
-# -- Divisional maps
-#-----------------------------------------
-dept_obs <- dat %>% group_by(Department) %>%
-  summarise(count=sum(pop, na.rm=T))
-
-adm2a <- adm2
-adm2a$obs <- dept_obs$count[as.numeric(adm2a$id)]
-
-# ---------------------------------------------------
-adm2a$pred <-divisional.est$total[as.numeric(adm2a$id)]
-adm2a$predL <-divisional.est$lower[as.numeric(adm2a$id)]
-adm2a$predU <-divisional.est$upper[as.numeric(adm2a$id)]
-adm2a$uncert <-divisional.est$uncertainty[as.numeric(adm2a$id)]
-
-# Mean
-tmap_mode("plot")
-dpred <- tm_shape(adm2a)+ 
-  tm_polygons(col="pred", title="Predicted Count",
-              style="cont", n=6, palette=plasma(100),
-              legend.show =F,
-              breaks = c(500000, 1000000, 1500000,
-                         3000000, 4000000, 5000000)
-              )+
-  tm_borders(col="black", lwd=2)+
-  tm_layout(frame=F)
-dpred
-
-
-# lower
-dpred.lower <- tm_shape(adm2a)+ 
-  tm_polygons(col="predL", title="Predicted Count",
-              style="cont", n=6, palette=plasma(100),
-              legend.show = F,
-              breaks = c(500000, 1000000, 1500000,
-                         3000000, 4000000, 5000000)
-              )+
-  tm_borders(col="black", lwd=2)+
-  tm_layout(frame=F)
-dpred.lower
-
-# upper
-dpred.upper <- tm_shape(adm2a)+ 
-  tm_polygons(col="predU", title="Predicted Count",
-              style="cont", n=6, palette=plasma(100),
-              legend.show = F,
-              breaks = c(500000, 1000000, 1500000,
-                         3000000, 4000000, 5000000)
-              )+
-  tm_borders(col="black", lwd=2)+
-  tm_layout(frame=F)
-dpred.upper
-
-t_dep <-tmap_arrange(dpred, dpred.lower, 
-                     dpred.upper,nrow=1)
-
-
-
 # Compare the projected regional estimates with the modelled
 library(ggplot2)
 library(scales)
 theme_set(theme_classic())
 
 # prep data
-df <- read.csv(paste0(output_path, "regional_final_with_projections_07_06_23.csv"))
-df <- df[, c("names", "NIS.Projected", "total")]
 names(df)
 df$NIS.Projected<- df$NIS.Projected/1000
 df$total <- df$total/1000
@@ -1180,8 +941,6 @@ colnames(df1) <- c("Region", "Estimate", "Method")
 df2 <- df[,c("names", "total")]
 df2$Method <- rep("Modelled", nrow(df2))
 colnames(df2) <- c("Region", "Estimate", "Method")
-
-
 
 # combined
 df3 <- rbind(df1, df2)
@@ -1212,4 +971,4 @@ rslp <-  ggpar(plot_slp, xlab="Method", ylab="Estimated Counts ('000)",
                ytickslab.rt = 45)
 rslp
 
-save.image(paste0(output_path, "cmr_application.Rdata"))
+#save.image(paste0(output_path, "cmr_application.Rdata"))
