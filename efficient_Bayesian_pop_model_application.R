@@ -392,6 +392,7 @@ grid.arrange(levelplot(g.mean, scales=list(draw=F),
 #--------------------------------------------------------------------------
 # Load the stack of prediction covariates
 # download the prediction stack "prediction_data.RDS" from Google drive here: https://drive.google.com/file/d/1290hqUnBHhQS0I3iijddj34solTG-S_S/view?usp=sharing
+#data_path <- "//worldpop.files.soton.ac.uk/Worldpop/Projects/WP517763_GRID3/Working/CMR/Chris_N/paper1/submission"
 pred_data <- readRDS(paste0(data_path, "Input_Covariates/prediction_data.RDS"))
 data <- pred_data
 head(pred_data)
