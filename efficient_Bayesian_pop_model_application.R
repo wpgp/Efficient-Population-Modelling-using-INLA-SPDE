@@ -47,9 +47,24 @@ output_path <- paste0(drive_path, "output/")# all results
 #---------------------------------------------------------------------------------
 
 # Load and explore data       
-dat <- read.csv(paste0(data_path,"Input_Survey_Data/CMR_Complete_Data3.csv"))# combined survey data
-shp <- st_read(paste0(data_path, "Input_Settlement_Boundaries/EA/CMR_Data3.shp")) #combined shapefile  
-names(shp)
+#dat <- read.csv(paste0(data_path,"Input_Survey_Data/CMR_Complete_Data3.csv"))# combined survey data
+#shp <- st_read(paste0(data_path, "Input_Settlement_Boundaries/EA/CMR_Data3.shp")) #combined shapefile  
+#names(shp)
+githublink <- "https://raw.github.com/wpgp/Efficient-Population-Modelling-using-INLA-SPDE/main/CMR_Complete_Data3.RData"
+load(url(githublink))
+names(covs) # the data frame is called 'covs' 
+
+install.packages("googledrive")
+library(googledrive)
+# Replace 'your_file_id' with the actual file ID
+drive_download(as_id("your_file_id"), path = "local_file.csv")
+temp <- tempfile(fileext = ".zip")
+download.file("https://drive.google.com/uc?authuser=0&id=1AiZda_1-2nwrxI8fLD0Y6e5rTg7aocv0&export=download",
+  temp)
+out <- unzip(temp, exdir = tempdir())
+bank <- read.csv(out[14], sep = ";")
+str(bank)
+
 
 # visualise the imputed household size
 plot(shp["I_LHHSI"]) 
