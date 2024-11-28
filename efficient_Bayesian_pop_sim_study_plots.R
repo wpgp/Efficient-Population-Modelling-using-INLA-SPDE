@@ -129,7 +129,7 @@ plot_corr <- ggline(corr, x = "spat_cor", y = "value",
                     point.size=1.5,
                     size=1.4)
 
-rcorr <-  ggpar(plot_corr, xlab="Spatial Variance", ylab="CORR",
+rcorr <-  ggpar(plot_corr, xlab="Spatial Variance", ylab="Correlation Coefficient (CORR)",
                 legend = "top", legend.title = "Survey \n Coverage (%)",size=22,
                 font.legend=c(14),
                 font.label = list(size = 14, face = "bold", color ="red"),
@@ -155,7 +155,7 @@ plot_rmse <- ggline(rmse, x = "spat_cor", y = "value",
                     #linetype = "pop_cover",
                     size=1.4)
 
-rrmse <-  ggpar(plot_rmse, xlab="Spatial Variance", ylab="RMSE",
+rrmse <-  ggpar(plot_rmse, xlab="Spatial Variance", ylab="Root Mean Square Error (RMSE)",
                legend = "top", legend.title = "Survey \n Coverage (%)",size=22,
                font.legend=c(14),
                font.label = list(size = 14, face = "bold", color ="red"),
@@ -181,7 +181,7 @@ plot_mae <- ggline(mae, x = "spat_cor", y = "value",
                     point.size=1.5,
                     #linetype = "pop_cover",
                     size=1.4)
-rmae <-  ggpar(plot_mae, xlab="Spatial Variance", ylab="MAE",
+rmae <-  ggpar(plot_mae, xlab="Spatial Variance", ylab="Mean Absolute Error (MAE)",
                 legend = "none", 
                font.label = list(size = 14, face = "bold", color ="red"),
                font.x = c(14),
@@ -207,7 +207,7 @@ plot_bias <- ggline(bias, x = "spat_cor", y = "value",
                    size=1.4)
 
 
-rbias <-  ggpar(plot_bias, xlab="Spatial Variance", ylab="BIAS",
+rbias <-  ggpar(plot_bias, xlab="Spatial Variance", ylab="Absolute Bias (BIAS)",
                 legend = "none", 
                 font.label = list(size = 14, face = "bold", color ="red"),
                 font.x = c(14),
@@ -252,11 +252,11 @@ mod.predlow$mean_pop_hat <- round(mod.predlow$mean_pop_hat/1000) # per 1k
 
 plot_low <- ggscatter(mod.predlow, x = "pop", y = "mean_pop_hat",
           add = "reg.line",                         # Add regression line
-          facet.by = "cover2",
+          facet.by = "source",
           conf.int = TRUE,                          # Add confidence interval
-          color = "source", 
-          palette = "lancet",           # Color by groups "cyl"
-          shape = "source"                             # Change point shape by groups "cyl"
+          color = "cover2", 
+          palette = "lancet"#,           # Color by groups "cyl"
+         #shape = "cover2"                             # Change point shape by groups "cyl"
 ) 
 
 rlow <-  ggpar(plot_low, xlab="Simulated Counts ('000)", ylab="Predicted Counts ('000)",
@@ -278,17 +278,41 @@ dim(mod.predmed <- mod.pred %>% filter(spat_cor ==0.1))
 mod.predmed$pop <- round(mod.predmed$pop/1000) # per 1k
 mod.predmed$mean_pop_hat <- round(mod.predmed$mean_pop_hat/1000) # per 1k
 
+# coverage
 plot_med <- ggscatter(mod.predmed, x = "pop", y = "mean_pop_hat",
                       add = "reg.line",                         # Add regression line
-                      facet.by = "cover2",
-                      conf.int = TRUE,                          # Add confidence interval
-                      color = "source", 
+                      #facet.by = "cover2",
+                      #conf.int = TRUE,                          # Add confidence interval
+                      color = "cover", 
                       palette = "lancet",           # Color by groups "cyl"
-                      shape = "source"                             # Change point shape by groups "cyl"
+                      shape = "cover"                             # Change point shape by groups "cyl"
 ) 
 
 rmed <-  ggpar(plot_med, xlab="Simulated Counts ('000)", ylab="Predicted Counts ('000)",
-               legend = "right", 
+                      legend = "top", 
+                      legend.title = "Survey \n Coverage (%)",size=22,
+                      font.legend=c(12),
+                      font.label = list(size = 12, face = "bold", color ="red"),
+                      font.x = c(12),
+                      font.y = c(12),
+                      font.main=c(14),
+                      font.xtickslab =c(10),
+                      font.ytickslab =c(10),
+                      # orientation = "reverse",
+                      xtickslab.rt = 45, ytickslab.rt = 45)
+rmed
+# data source
+plot_med.source <- ggscatter(mod.predmed, x = "pop", y = "mean_pop_hat",
+                      add = "reg.line",                         # Add regression line
+                      #facet.by = "cover2",
+                      #conf.int = TRUE,                          # Add confidence interval
+                      color = "source", 
+                      palette = "lancet"#,           # Color by groups "cyl"
+                      #shape = "source"                             # Change point shape by groups "cyl"
+)
+
+rmed.source <-  ggpar(plot_med.source, xlab="Simulated Counts ('000)", ylab="Predicted Counts ('000)",
+               legend = "top", 
                legend.title = "Data \n Source",size=22,
                font.legend=c(12),
                font.label = list(size = 12, face = "bold", color ="red"),
@@ -299,7 +323,7 @@ rmed <-  ggpar(plot_med, xlab="Simulated Counts ('000)", ylab="Predicted Counts 
                font.ytickslab =c(10),
                # orientation = "reverse",
                xtickslab.rt = 45, ytickslab.rt = 45)
-rmed 
+rmed.source 
 
 
 # Medium
