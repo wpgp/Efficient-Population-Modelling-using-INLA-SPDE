@@ -1,6 +1,7 @@
 # Efficient-Population-Modelling-using-INLA-SPDE
 R codes for INLA-SPDE bottom-up population modelling (Cameroon Application)
 Here, we provide the descriptions of the resources within this repository. It contains both the R scripts and all the relevant datasets, except the very large prediction grids covariates (prediction_data.RDS) which is available on Google Drive here: https://drive.google.com/file/d/1290hqUnBHhQS0I3iijddj34solTG-S_S/view?usp=sharing  
+Additionally, a copy of the Supplementary materials document "Bayesian_Geostat_Pop_Mod_MethodsX_supplementary.pdf" is included. 
 
 # R Scripts
 There are three key scripts contained within the repository to help users reproduce the datasets and to facilitate the implementation of the methodology in other contexts:
