@@ -30,7 +30,6 @@ lapply(packages, library, character.only = TRUE) ##--access the libraries
 
 library(spdep)
 
-library(DClusterm)
 library(viridis)
 library(tmap)
 library(tmaptools)
