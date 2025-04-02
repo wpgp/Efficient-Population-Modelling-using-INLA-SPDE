@@ -17,7 +17,7 @@ rm(list=ls()) #----Clear the workspace
 # Load key libraries
 packages <- c("raster", "haven", "sf","sp", "tmap","tidyverse",
               "lattice", "gridExtra", "devtools", "rlang")
-if(length(setdiff(packages, rownames(installed.packages())), type="binary") > 0) { 
+if(length(setdiff(packages, rownames(installed.packages()))) > 0) { 
   install.packages(setdiff(packages, rownames(installed.packages()))) }
 
 
