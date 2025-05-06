@@ -1567,10 +1567,4 @@ ggarrange(rbar_rmse, rbar_mae,
 min(rr_dat$rrmae); max(rr_dat$rrmae)
 min(rr_dat$rrrmse); max(rr_dat$rrrmse)
 
-# for models where all the data sources have the same variance
-# reduction in relative mae ranged from 17.65% to 25.35%
-# while reduction in relative rmse ranged from 13.60% to 27.02%
 
-# for models where all the data sources have the different variances
-# reduction in relative mae ranged from 21.39% to 31.21%
-# while reduction in relative rmse ranged from 18.71% to 28.08%
