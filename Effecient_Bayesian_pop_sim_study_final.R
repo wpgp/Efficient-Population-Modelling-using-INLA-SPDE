@@ -100,10 +100,10 @@ model_metrics <- function(obs, pred)
 
 
 #---------------------------------------------------------------------------------------
-cover <- seq(0.2,1, by=0.2)
-spat.autocor <- c(0.75, 1.25, 1.75, 2.75, 3.75) 
-source_var <- list(same = rep(0.001, 5), 
-                   diff = c(0.0015, 0.002, 0.0017, 0.001, 0.0032))#variance of data source random effects
+cover <- seq(0.2,1, by=0.2)# proportion of missingness
+spat.autocor <- c(1.25, 1.75, 2.75, 3.75) # spatial variances
+source_var <- list(equal = rep(0.001, 5), # data source variance 
+                   unequal = c(0.0015, 0.002, 0.0017, 0.001, 0.0032))#variance of data source random effects
 
 #source_re[[2]]
 #---Create the data frame 
@@ -212,7 +212,7 @@ for(b in 1:length(spat.autocor))
   
   
   dtyp_re1 <- as.vector(t(mvrnorm(1, rep(0, n.dat_typ), 
-                                  diag(source_var[[2]]))))
+                                  diag(source_var[[2]])))) #unequal data source variance
   
   
   ##-----Extract data types effects
@@ -558,22 +558,14 @@ for(b in 1:length(spat.autocor))
     
     # combine
     ddtt <- rbind(dat1,dat2)
-    write.csv(ddtt, file=paste0(result_path2,"/post_dat.csv"))
+    write.csv(ddtt, file=paste0(result_path2,"/post_dat.csv"))# save the posterior data if required
     
-    ##---Calculate model fit and model cross-validation metrics  
-    met1 <- unlist(model_metrics(dat1$pop, 
-                                 dat1$mean_pop_hat))
-    met2 <- unlist(model_metrics(dat2$pop, 
-                                 dat2$mean_pop_hat))
-    
-    
-  metrics <- rbind(met1,met2)
-    
+
     par(mfrow=c(1,2))
-    plot(dat1$pop, dat1$mean_pop_hat)
+    plot(dat1$pop, dat1$mean_pop_hat) # visualise scatter plots
     plot(dat2$pop, dat2$mean_pop_hat)
     par(mfrow=c(1,1))
-    write.csv(metrics1a, file=paste0(result_path2,"/fit_metrics.csv"))
+    write.csv(metrics1a, file=paste0(result_path2,"/fit_metrics.csv")) # save fit metrics
     write.csv(metrics, file=paste0(result_path2,"/fit_metrics2.csv"))
   }
   
@@ -625,8 +617,6 @@ met_long$method = factor(met_long$method)
 met_long$cover = factor(met_long$cover)
 met_long$spat_cor = factor(met_long$spat_cor)
 
-
-met_long <- met_long %>% filter(spat_cor !="0.75")
 levels(met_long$method) <- c("Base","Proposed")
 write.csv(met_long, "combined_fit_metrics_long.csv", row.names=FALSE)
 
@@ -754,13 +744,12 @@ ggarrange(rrmse,rmae,
 #### --- Perecentage reductions in RMSE and MAE
 #----------------------------------------------------------
 ### Reduction in relative error measures
-rrem <- as.data.frame(read.csv(paste0(out_path, "/error_reduction.csv"))) # calculate this from the excel fivle saved in the outpute folder
+rrem <- as.data.frame(read.csv(paste0(out_path, "/error_reduction.csv"))) # calculate this from the 'combined_fit_metrics.csv' file saved above
 rr_dat <- rrem %>% drop_na(rrmae)%>% dplyr::select(c(cover,
                                                      spat_cor,
                                                      rrmae, rrrmse))
 
 
-rr_dat <- rr_dat %>% filter(spat_cor !="0.75")
 rr_dat$rrmae <- round(rr_dat$rrmae*100, 2)
 rr_dat$rrrmse <- round(rr_dat$rrrmse*100, 2)
 rr_dat$spat_cor <- factor(rr_dat$spat_cor)
@@ -838,18 +827,9 @@ ggarrange(rbar_rmse, rbar_mae,
 min(rr_dat$rrmae); max(rr_dat$rrmae)
 min(rr_dat$rrrmse); max(rr_dat$rrrmse)
 
-# for models where all the data sources have the same variance
-# reduction in relative mae ranged from 17.65% to 25.35%
-# while reduction in relative rmse ranged from 13.60% to 27.02%
-
-# for models where all the data sources have the different variances
-# reduction in relative mae ranged from 21.39% to 31.21%
-# while reduction in relative rmse ranged from 18.71% to 28.08%
-
-
 #---------------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------------
-### Same data source variance
+### Equal data source variance
 #---------------------------------------------------------------------------------------
 #---------------------------------------------------------------------------------------
 path <- "//worldpop.files.soton.ac.uk/Worldpop/Projects/WP517763_GRID3/Working/CMR/Chris_N/paper1"
@@ -935,7 +915,7 @@ for(b in 1:length(spat.autocor))
   
   
   dtyp_re1 <- as.vector(t(mvrnorm(1, rep(0, n.dat_typ), 
-                                  diag(source_var[[1]]))))# same data source variance
+                                  diag(source_var[[1]]))))# equal data source variance
   
   
   ##-----Extract data types effects
@@ -1281,16 +1261,7 @@ for(b in 1:length(spat.autocor))
     
     # combine
     ddtt <- rbind(dat1,dat2)
-    write.csv(ddtt, file=paste0(result_path2,"/post_dat.csv"))
-    
-    ##---Calculate model fit and model cross-validation metrics  
-    met1 <- unlist(model_metrics(dat1$pop, 
-                                 dat1$mean_pop_hat))
-    met2 <- unlist(model_metrics(dat2$pop, 
-                                 dat2$mean_pop_hat))
-    
-    
-    metrics <- rbind(met1,met2)
+    write.csv(ddtt, file=paste0(result_path2,"/post_dat.csv"))# save the posterior estimates
     
     par(mfrow=c(1,2))
     plot(dat1$pop, dat1$mean_pop_hat)
@@ -1355,7 +1326,6 @@ met_long$cover = factor(met_long$cover)
 met_long$spat_cor = factor(met_long$spat_cor)
 
 
-met_long <- met_long %>% filter(spat_cor !="0.75")
 levels(met_long$method) <- c("Base","Proposed")
 write.csv(met_long, "combined_fit_metrics_long.csv", row.names=FALSE)
 
@@ -1483,13 +1453,12 @@ ggarrange(rrmse,rmae,
 #### --- Perecentage reductions in RMSE and MAE
 #----------------------------------------------------------
 ### Reduction in relative error measures
-rrem <- as.data.frame(read.csv(paste0(out_path, "/error_reduction.csv")))
+rrem <- as.data.frame(read.csv(paste0(out_path, "/error_reduction.csv"))) # calculate from the 'combined_fit_metrics.csv' data saved above.
 rr_dat <- rrem %>% drop_na(rrmae)%>% dplyr::select(c(cover,
                                                      spat_cor,
                                                      rrmae, rrrmse))
 
 
-rr_dat <- rr_dat %>% filter(spat_cor !="0.75")
 rr_dat$rrmae <- round(rr_dat$rrmae*100, 2)
 rr_dat$rrrmse <- round(rr_dat$rrrmse*100, 2)
 rr_dat$spat_cor <- factor(rr_dat$spat_cor)
@@ -1567,4 +1536,4 @@ ggarrange(rbar_rmse, rbar_mae,
 min(rr_dat$rrmae); max(rr_dat$rrmae)
 min(rr_dat$rrrmse); max(rr_dat$rrrmse)
 
-
+### End
