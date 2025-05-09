@@ -40,6 +40,7 @@ library(tmaptools)
 # Load and explore data       
 githublink <- "https://raw.github.com/wpgp/Efficient-Population-Modelling-using-INLA-SPDE/main/CMR_input_data.RData"
 load(url(githublink))
+out_path <- tempdir()# please specify your output folder here
 
 ls() # view the loaded files: Only need - dat, shp, df, div_names & reg_names 
 # dat: the input demographic data with observed population counts and covariates
