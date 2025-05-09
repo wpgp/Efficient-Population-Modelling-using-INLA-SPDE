@@ -13,7 +13,7 @@ require(grid);require(gridExtra);require(lattice);require(tidyverse)
 library(dplyr); library(sf); library(tmap); library(tmaptools)
 
 
-out_path <- tempdir()
+out_path <- tempdir()# please specify your output folder here
 githublink <- "https://raw.github.com/wpgp/Efficient-Population-Modelling-using-INLA-SPDE/main/simulation_shapefile.RData"
 load(url(githublink))
 
